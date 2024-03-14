@@ -1,0 +1,69 @@
+#!/bin/bash
+
+LIB_DIR="lib"
+
+# Function to display help
+function display_help() {
+    echo "Usage: $0 [-i|--install <docker|native>] [-u|--uninstall <docker|native>]"
+    echo "Options:"
+    echo "  -i, --install      Install instances using instances.sh"
+    echo "  -u, --uninstall    Uninstall instances using uninstall.sh"
+    echo "  -h, --help         Display this help message"
+}
+
+# Function to handle installation
+function install_instances() {
+    if [ "$1" == "docker" ]; then
+        echo "Installing Docker instances"
+        ./bin/sets/lib/sets-instance.sh
+    elif [ "$1" == "native" ]; then
+        echo "Installing native instances"
+        ./bin/sets/lib/sets-native.sh
+    else
+        echo "Invalid installation option. Use -h or --help for usage information."
+        exit 1
+    fi
+    echo "Installation complete."
+}
+
+# Function to handle uninstallation
+function uninstall_instances() {
+    if [ "$1" == "docker" ]; then
+        echo "Uninstalling Docker instances using $LIB_DIR/docker_uninstall.sh..."
+        ./$LIB_DIR/uninstall-docker.sh
+    elif [ "$1" == "native" ]; then
+        echo "Uninstalling native instances using $LIB_DIR/native_uninstall.sh..."
+        ./$LIB_DIR/native_uninstall.sh
+    else
+        echo "Invalid uninstallation option. Use -h or --help for usage information."
+        exit 1
+    fi
+    echo "Uninstallation complete."
+}
+
+# Main script
+case "$1" in
+    -i|--install)
+        if [ -z "$2" ]; then
+            echo "Missing installation type. Use -h or --help for usage information."
+            exit 1
+        fi
+        install_instances "$2"
+        ;;
+    -u|--uninstall)
+        if [ -z "$2" ]; then
+            echo "Missing uninstallation type. Use -h or --help for usage information."
+            exit 1
+        fi
+        uninstall_instances "$2"
+        ;;
+    -h|--help)
+        display_help
+        ;;
+    *)
+        echo "Invalid option. Use -h or --help for usage information."
+        exit 1
+        ;;
+esac
+
+exit 0
